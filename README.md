@@ -14,8 +14,6 @@ and then decode this information for forecasting, a typical encoder-decoder LSTM
 3. the 3rd step is to change unsupervised problem to supervised problem. Train : data is split as follows, 60% train, 40 validation.
 4. the 4th step is to build a ConvLSTM model: many to many multivariate and multi-step model.  ConvLSTM can preserve all the spatial information
 5. train the model by reading the data on the fly
-6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity to output the imagesID lists which have the
-shortest distances to the stored features,, and do the intersect_count with regards to ture image_id
-this part is not provided.
+6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity, the relevant code is not provided. 
 
 Reference:  https://github.com/sxjscience/HKO-7  Deep Learning for Precipitation Nowcasting: A Benchmark and A New Model
