@@ -69,9 +69,9 @@ def color_imag(processed_path, resize=False):
 	#print(values_reduced.shape)
 	#features = dict(zip(features.keys(), values))
 
-	saveFile("color.dict",features)
-	#saveFile("features_reduced_1024.dict",features_reduced)
-	saveFile("color_imagelist.csv",imagelist)
+	save_array("color.dict",features)
+	#save_array("features_reduced_1024.dict",features_reduced)
+	save_array("color_imagelist.csv",imagelist)
 
 	return imagelist,features
 #**********************************************************************************************************************#--------------------------------------------------------------------------
@@ -96,8 +96,8 @@ def convlstm_data(imagelist, n_inputs, n_outputs =7 ):
     val_X_idx = val_X_idx.tolist()
     val_y_idx = val_y_idx.tolist()
 
-    saveFile('color_val_x_index.csv',val_X_idx)
-    saveFile('color_val_y_index.csv',val_y_idx)
+    save_array('color_val_x_index.csv',val_X_idx)
+    save_array('color_val_y_index.csv',val_y_idx)
 
     return (train_X_idx , train_y_idx, val_X_idx , val_y_idx )
 
@@ -172,10 +172,10 @@ model = model_from_json(loaded_model_json)
 model.load_weights(model_path + model_name+ ".h5")
 # demonstrate prediction
 
-features = loadFile('color.dict')
+features = load_array('color.dict')
 #val_X , val_y = load_array("val_X.dat"),load_array("val_y.dat")
 #vectors = np.array(list( features.values()))
-val_y_index = loadFile('color_val_y_index.csv')
+val_y_index = load_array('color_val_y_index.csv')
 #val_y_index = val_y_idx.tolist()
 #n_vocab  = len(features)
 n_vals = len(val_y_index)
