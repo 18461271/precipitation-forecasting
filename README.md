@@ -16,5 +16,6 @@ and then decode this information for forecasting, a typical encoder-decoder LSTM
 5. train the model by reading the data on the fly
 6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity, the relevant code is not provided. 
 
-Reference: 1.(Deep Learning for Precipitation Nowcasting: A Benchmark and A New Model)[https://github.com/sxjscience/HKO-7]
+Reference: 1.[Deep Learning for Precipitation Nowcasting: A Benchmark and A New Model](https://github.com/sxjscience/HKO-7)
            2.unpervised learning of video representations of using lstms
+           3.long short term memory networks with python
