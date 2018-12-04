@@ -14,14 +14,14 @@ import numpy as np
 import scipy.misc
 from PIL import Image
 from sklearn.decomposition import PCA
-
-#import bcolz
+import bcolz
 from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
 
+import matplotlib.pyplot as plt
 
 #n_inputs = 30
 #n_outputs = 7
@@ -33,34 +33,25 @@ def save_array(fname, arr):
 def load_array(fname):
     return bcolz.open(fname)[:]
 
-def saveFile(fileName, object):
-	with open(fileName,'wb') as f:
- 	   pickle.dump(object,f)
-
-def loadFile(fileName):
-	fileObject = open(fileName,'rb')
-	return pickle.load(fileObject,encoding='bytes')
-
 def load_data(pca_features = True):
 	if pca_features:
-		features = loadFile('features_reduced_1024.dict' )
+		features = load_array('features_reduced_1024.dict' )
 	else:
-		features = loadFile('features.dict' )
-	imagelist = loadFile('imagelist.csv')
+		features = load_array('features.dict' )
+	imagelist = load_array('imagelist.csv')
 	return imagelist, features
 
 def load_gray_data(pca_features = True):
 	if pca_features:
-		features = loadFile('gray_reduced_2048.dict' )
+		features = load_array('gray_reduced_2048.dict' )
 	else:
-		features = loadFile('gray.dict' )
-	imagelist = loadFile('gray_imagelist.csv')
+		features = load_array('gray.dict' )
+	imagelist = load_array('gray_imagelist.csv')
 	return imagelist, features
 
 def load_color_data():
-
-	features = loadFile('color.dict' )
-	imagelist = loadFile('color_imagelist.csv')
+	features = load_array('color.dict' )
+	imagelist = load_array('color_imagelist.csv')
 	return imagelist, features
 
 
@@ -102,9 +93,9 @@ def gray_imag(processed_path, n_components = 4096, pca_features = True):
 		features[image_id] = np.squeeze(feature)
 
 	if pca_features == False:
-		saveFile("gray.dict",features)
-			#saveFile("features_reduced_1024.dict",features_reduced)
-		saveFile("gray_imagelist.csv",imagelist)
+		save_array("gray.dict",features)
+			#save_array("features_reduced_1024.dict",features_reduced)
+		save_array("gray_imagelist.csv",imagelist)
 		#return imagelist,features
 	else :
 		values = np.array(list(features.values()))/255
@@ -116,9 +107,9 @@ def gray_imag(processed_path, n_components = 4096, pca_features = True):
 		features_reduced = dict(zip(features.keys(), values_reduced))
 		features = features_reduced
 
-		#saveFile("gray.dict",features)
-		saveFile("gray_reduced_4096.dict",features)
-		saveFile("gray_imagelist.csv",imagelist)
+		#save_array("gray.dict",features)
+		save_array("gray_reduced_4096.dict",features)
+		save_array("gray_imagelist.csv",imagelist)
 		#print(values.shape)
 
 	return imagelist,features
@@ -230,12 +221,11 @@ def lstm_data(imagelist, features, n_inputs, n_outputs = 7 ):
     #save_array("val_y.dat",val_y)
     save_array("X_data.dat",X_data)
     save_array("y_data.dat",y_data)
-    saveFile("dict_val.dict",dict_val)
-    saveFile('val_y_index.csv',val_y_index)
+    save_array("dict_val.dict",dict_val)
+    save_array('val_y_index.csv',val_y_index)
     return (X_data , y_data ,dict_val )
 
 
-import matplotlib.pyplot as plt
 def self_pca(A, n_components = 250):
 	cov = np.dot( A.T, A)/A.shape[0]
 	U, s, Vh = np.linalg.svd(cov)
@@ -248,9 +238,3 @@ def self_pca(A, n_components = 250):
 	new_A = Xrot_reduced = np.dot(X, U[:,:n_components])  #np.dot(np.dot(U,np.diag(s)),Vh)# np.dot(U, np.dot(np.diag(s), Vh))
 
 	return new_A
-
-
-
-
-def intersect(a, b):
-	return list(set(a) & set(b))
