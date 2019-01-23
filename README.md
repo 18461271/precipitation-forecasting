@@ -23,10 +23,8 @@ how to  use :   run `FLSTM_train.py` to train the model then run `FLSTM_test.py`
 1. the first step involves converting gif image to jpg image
 2. the second step is to read image data and crop uncessary text in the image, and then build a dictionary to store  image_id : 3D_image_data pairs
 3. the 3rd step is to change unsupervised problem to supervised problem. Train : data is split as follows, 60% train, 40 validation.
-4. the 4th step is to build a LSTM model: many to many multivariate and multi-step model.  ConvLSTM can preserve all the spatial information
-5. train the model by reading the data on the fly
-6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity to output the imagesID lists which have the
-shortest distances to the stored features,, and do the intersect_count with regards to ture image_id.
+4. the 4th step is to build a LSTM model: many to many multivariate and multi-step model. 
+6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity to output the imagesID lists which have the shortest distances to the stored features,, and do the intersect_count with regards to ture image_id.
 
 Reference: 
 
