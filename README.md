@@ -1,17 +1,10 @@
 # precipitation-forecasting
 
-# the downloaded dataset is extracted in folder "data_download"
-
-
-
 The primary of purpose of this project is to use the last 6 years precipitation map to generate the next 7 days forecasting.
-
 
 ## My first approach is to use the Conv-LSTM, the basic idea is to apply convolution networks on images to encode local spatial temporal information and then decode this information for forecasting.
 
 how to  use :   run `ConvLSTM_train.py`
-
-
 
 1. the first step involves converting gif image to jpg image
 2. the second step is to read image data and crop uncessary text in the image, and then build a dictionary to store  image_id : 3D_image_data pairs
@@ -23,11 +16,9 @@ shortest distances to the stored features,, and do the intersect_count with rega
 this part is not provided.
 
 
-
 ## My Second approach is to use the fully connected LSTM, the basic idea is to apply recurrent neural networks on images to encode image features and then decode this information for forecasting, a typical encoder-decoder LSTM model.
 
 how to  use :   run `FLSTM_train.py` to train the model then run `FLSTM_test.py` to test.
-
 
 1. the first step involves converting gif image to jpg image
 2. the second step is to read image data and crop uncessary text in the image, and then build a dictionary to store  image_id : 3D_image_data pairs
@@ -38,10 +29,10 @@ how to  use :   run `FLSTM_train.py` to train the model then run `FLSTM_test.py`
 shortest distances to the stored features,, and do the intersect_count with regards to ture image_id.
 
 Reference: 
+
+
 1.[Deep Learning for Precipitation Nowcasting: A Benchmark and A New Model](https://github.com/sxjscience/HKO-7)
 
-
 2.unpervised learning of video representations of using lstms
-           
-           
+                   
 3.long short term memory networks with python
