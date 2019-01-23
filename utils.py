@@ -14,14 +14,14 @@ import numpy as np
 import scipy.misc
 from PIL import Image
 from sklearn.decomposition import PCA
-import bcolz
+
+#import bcolz
 from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
 
-import matplotlib.pyplot as plt
 
 #n_inputs = 30
 #n_outputs = 7
@@ -50,6 +50,7 @@ def load_gray_data(pca_features = True):
 	return imagelist, features
 
 def load_color_data():
+
 	features = load_array('color.dict' )
 	imagelist = load_array('color_imagelist.csv')
 	return imagelist, features
@@ -108,11 +109,76 @@ def gray_imag(processed_path, n_components = 4096, pca_features = True):
 		features = features_reduced
 
 		#save_array("gray.dict",features)
-		save_array("gray_reduced_4096.dict",features)
+		save_array("gray_reduced_2048.dict",features)
 		save_array("gray_imagelist.csv",imagelist)
 		#print(values.shape)
 
 	return imagelist,features
+
+def color_imag(processed_path, resize=False):
+	features = dict()
+	imagelist = []
+	for name in glob.glob(processed_path):
+		flbase = os.path.basename(name)
+		# load an image from file
+		img_data  = scipy.misc.imread(name, flatten=False, mode='RGB') # cv2.imread(name)
+		img_data = img_data[20:270,40:,:] #.astype(np.float32)  #crop the unnecessary texts  ( 250, 360, 3)
+		#print( img_data.shape)
+		#sys.exit()
+		if resize == True:
+			img_data = cv2.resize(img_data, (img_shape, img_shape))
+		#img_data = img_data.reshape([img_data.shape[0], img_data.shape[1],3])
+		#print(feature)
+		#print(feature.shape, type( feature[0][0] ))
+		#sys.exit()
+		# get image id
+		image_id = flbase.split('.')[0]
+		#print(image_id, feature.shape )
+		# store feature
+		imagelist.append(image_id)
+		#print(np.squeeze(img_data), img_data )
+		#3sys.exit()
+
+		features[image_id] = img_data# np.squeeze(feature)
+
+	#values = np.array(list(features.values()))/255   #normalization image data
+	#values -= np.mean(values, axis=0)
+	#values /= np.std(values, axis = 0)
+	#imagelist = list(features.keys())
+	#values_reduced = pca(values, n_components)  # pca feature reduction
+	#print(values_reduced.shape)
+	#features = dict(zip(features.keys(), values))
+
+	save_array("color.dict",features)
+	#save_array("features_reduced_1024.dict",features_reduced)
+	save_array("color_imagelist.csv",imagelist)
+
+	return imagelist,features
+
+def convlstm_data(imagelist, n_inputs, n_outputs =7 ):
+    reframed = series_to_supervised(imagelist,n_inputs,n_outputs)  #change unsupervised problem to supervised problem
+    indices  = reframed.values  #pandas data to a matrix
+    m,n = indices.shape
+    #print( indices)
+    #X_data , y_data  = load_convlstm_values(features, indices[:,:-n_outputs]  ), load_convlstm_values(features, indices[:, -n_outputs:] )
+    num_training = int(m*0.67)
+    num_val = m - num_training
+    #n_inputs = n-n_outputs
+    train_idx = indices[:num_training,:]
+    train_X_idx , train_y_idx  = train_idx[:, :-n_outputs], train_idx[:, -n_outputs:]
+    val_idx  = indices[num_training:,:]  #get x,y val examples
+    val_X_idx , val_y_idx  = val_idx[:, :-n_outputs], val_idx[:, -n_outputs:]
+
+    train_X_idx = train_X_idx.tolist()
+    train_y_idx = train_y_idx.tolist()
+
+    val_X_idx = val_X_idx.tolist()
+    val_y_idx = val_y_idx.tolist()
+
+    save_array('color_val_x_index.csv',val_X_idx)
+    save_array('color_val_y_index.csv',val_y_idx)
+
+    return (train_X_idx , train_y_idx, val_X_idx , val_y_idx )
 
 
 def pca(img, n_comp=200):
@@ -226,6 +292,7 @@ def lstm_data(imagelist, features, n_inputs, n_outputs = 7 ):
     return (X_data , y_data ,dict_val )
 
 
+import matplotlib.pyplot as plt
 def self_pca(A, n_components = 250):
 	cov = np.dot( A.T, A)/A.shape[0]
 	U, s, Vh = np.linalg.svd(cov)
@@ -238,3 +305,9 @@ def self_pca(A, n_components = 250):
 	new_A = Xrot_reduced = np.dot(X, U[:,:n_components])  #np.dot(np.dot(U,np.diag(s)),Vh)# np.dot(U, np.dot(np.diag(s), Vh))
 
 	return new_A
+
+
+
+
+def intersect(a, b):
+	return list(set(a) & set(b))
