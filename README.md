@@ -16,7 +16,7 @@ shortest distances to the stored features,, and do the intersect_count with rega
 this part is not provided.
 
 
-### My Second approach is to use the fully connected LSTM, the basic idea is to apply recurrent neural networks on images to encode image features and then decode this information for forecasting, a typical encoder-decoder LSTM model for solving sequence-to-sequence prediction problems.
+### My Second approach is to use the fully connected LSTM, the basic idea is to apply recurrent neural networks on images to encode image features and then decode this information for forecasting, a typical [encoder-decoder LSTM model](https://machinelearningmastery.com/lstm-autoencoders/) for solving sequence-to-sequence prediction problems.
 
 how to  use :   run `FLSTM_train.py` to train the model then run `FLSTM_test.py` to test.
  
