@@ -24,7 +24,8 @@ how to  use :   run `FLSTM_train.py` to train the model then run `FLSTM_test.py`
 2. the second step is to read image data and crop uncessary text in the image, all the images are reshaped  and  PCA dimension deducted and standardized into 1D array with 2048 dimensions, and finally a dictionary is built to store  (image_id : 1d_image_feature) pairs
 3. the 3rd step is to change unsupervised problem to supervised problem. Train : data is split as follows, 67% train, 33% validation. X,Y data have shape (n_items, time_dimension, 2048) as required by LSTM layer `input_shape`
 4. the 4th step is to build a LSTM model: many to many multivariate and multi-step model. "To summarize, the RepeatVector is used as an adapter to fit the fixed-sized 2D output of the encoder to the direring length and 3D input expected by the decoder. The TimeDistributed
-wrapper allows the same output layer to be reused for each element in the output sequence. " P129 <<long short term memory networks with python>>
+wrapper allows the same output layer to be reused for each element in the output sequence. " 
+> *long short term memory networks with python*  P129  
 6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity to output the imagesId lists which have the shortest distances to the stored features,, and do the intersect_count with regards to ture image_id.
 
 Reference: 
