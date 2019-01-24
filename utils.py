@@ -15,13 +15,13 @@ import scipy.misc
 from PIL import Image
 from sklearn.decomposition import PCA
 
-#import bcolz
-from keras.applications.vgg16 import VGG16
+import bcolz
+#from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
-from keras.applications.vgg16 import preprocess_input
+#from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
-
+from keras.utils import plot_model
 
 #n_inputs = 30
 #n_outputs = 7
@@ -33,26 +33,36 @@ def save_array(fname, arr):
 def load_array(fname):
     return bcolz.open(fname)[:]
 
+def saveFile(fileName, object):
+	with open(fileName,'wb') as f:
+ 	   pickle.dump(object,f)
+
+def loadFile(fileName):
+	fileObject = open(fileName,'rb')
+	return pickle.load(fileObject,encoding='bytes')
+
+
+
 def load_data(pca_features = True):
 	if pca_features:
-		features = load_array('features_reduced_1024.dict' )
+		features = loadFile('features_reduced_1024.dict' )
 	else:
-		features = load_array('features.dict' )
-	imagelist = load_array('imagelist.csv')
+		features = loadFile('features.dict' )
+	imagelist = loadFile('imagelist.csv')
 	return imagelist, features
 
 def load_gray_data(pca_features = True):
 	if pca_features:
-		features = load_array('gray_reduced_2048.dict' )
+		features = loadFile('gray_reduced_2048.dict' )
 	else:
-		features = load_array('gray.dict' )
-	imagelist = load_array('gray_imagelist.csv')
+		features = loadFile('gray.dict' )
+	imagelist = loadFile('gray_imagelist.csv')
 	return imagelist, features
 
 def load_color_data():
 
-	features = load_array('color.dict' )
-	imagelist = load_array('color_imagelist.csv')
+	features = loadFile('color.dict' )
+	imagelist = loadFile('color_imagelist.csv')
 	return imagelist, features
 
 
@@ -79,7 +89,7 @@ def gray_imag(processed_path, n_components = 4096, pca_features = True):
 	for name in glob.glob(processed_path):
 		flbase = os.path.basename(name)
 		# load an image from file
-		img_data  = cv2.imread(name,0)
+		img_data  = scipy.misc.imread(name, flatten=False, mode='L') # cv2.imread(name)#  cv2.imread(name,0)
 		img_data = img_data[20:270,40:]  #crop the uncessary texts
 		feature = img_data.reshape( 1, -1).astype(np.float32)
 		#print(feature)
@@ -94,9 +104,9 @@ def gray_imag(processed_path, n_components = 4096, pca_features = True):
 		features[image_id] = np.squeeze(feature)
 
 	if pca_features == False:
-		save_array("gray.dict",features)
+		saveFile("gray.dict",features)
 			#save_array("features_reduced_1024.dict",features_reduced)
-		save_array("gray_imagelist.csv",imagelist)
+		saveFile("gray_imagelist.csv",imagelist)
 		#return imagelist,features
 	else :
 		values = np.array(list(features.values()))/255
@@ -104,13 +114,13 @@ def gray_imag(processed_path, n_components = 4096, pca_features = True):
 		#values /= np.std(values, axis = 0)
 		#imagelist = list(features.keys())
 		values_reduced = pca(values, n_components)
-		print(values_reduced.shape)
+		#print(values_reduced.shape)
 		features_reduced = dict(zip(features.keys(), values_reduced))
 		features = features_reduced
 
 		#save_array("gray.dict",features)
-		save_array("gray_reduced_2048.dict",features)
-		save_array("gray_imagelist.csv",imagelist)
+		saveFile("gray_reduced_2048.dict",features)
+		saveFile("gray_imagelist.csv",imagelist)
 		#print(values.shape)
 
 	return imagelist,features
@@ -149,9 +159,9 @@ def color_imag(processed_path, resize=False):
 	#print(values_reduced.shape)
 	#features = dict(zip(features.keys(), values))
 
-	save_array("color.dict",features)
+	saveFile("color.dict",features)
 	#save_array("features_reduced_1024.dict",features_reduced)
-	save_array("color_imagelist.csv",imagelist)
+	saveFile("color_imagelist.csv",imagelist)
 
 	return imagelist,features
 
@@ -175,8 +185,8 @@ def convlstm_data(imagelist, n_inputs, n_outputs =7 ):
     val_X_idx = val_X_idx.tolist()
     val_y_idx = val_y_idx.tolist()
 
-    save_array('color_val_x_index.csv',val_X_idx)
-    save_array('color_val_y_index.csv',val_y_idx)
+    saveFile('color_val_x_index.csv',val_X_idx)
+    saveFile('color_val_y_index.csv',val_y_idx)
 
     return (train_X_idx , train_y_idx, val_X_idx , val_y_idx )
 
@@ -187,7 +197,7 @@ def pca(img, n_comp=200):
     #print(img_r.shape)
     transformed_pca = pca.fit_transform(img )  # transform
     #restored_img = pca.inverse_transform(transformed_pca) # inverse_transform
-    print(pca.explained_variance_ratio_, pca.singular_values_)
+    #print(pca.explained_variance_ratio_, pca.singular_values_)
     return transformed_pca
 
 
@@ -233,7 +243,7 @@ def load_img_values(features, idx):
     #print(dddd[0][0], len( dddd[0][0] ))
     #print( list(imagedict.values())[0])
     D = len(list(features.values())[0])  # number of features
-    print(a,b,D)
+    #print(a,b,D)
     target = np.zeros([a,b,D])
     for i in range(a):
         for j in range(b):
@@ -253,8 +263,10 @@ def lstm_data(imagelist, features, n_inputs, n_outputs = 7 ):
     num_val = m - num_training
 
     #n_inputs = n-n_outputs
-	#train_idx = indices[:num_training,:]
-	#train_X_idx , train_y_idx  = train_idx[:, :-n_outputs], train_idx[:, -n_outputs:]
+    train_idx = indices[:num_training,:]
+    train_X_idx , train_y_idx  = train_idx[:, :-n_outputs], train_idx[:, -n_outputs:]
+    train_X  = X_data[:num_training]
+    train_y = y_data[:num_training]
 
     val_idx  = indices[num_training:,:]  #get x,y val examples
     val_X_idx , val_y_idx  = val_idx[:, :-n_outputs], val_idx[:, -n_outputs:]
@@ -273,6 +285,7 @@ def lstm_data(imagelist, features, n_inputs, n_outputs = 7 ):
     #print( val_y_index[0])
     #sys.exit()
 
+    """
     dict_val = {}
     for i in range(num_val):
         groups = val_y_index[i]
@@ -280,34 +293,32 @@ def lstm_data(imagelist, features, n_inputs, n_outputs = 7 ):
         for j in groups:
             a.append( features[j])
         dict_val[i] = a
+    """
 
-	#save_array("train_X.dat",train_X)
-	#save_array("train_y.dat",train_y)
-    #save_array("val_X.dat",val_X)
+    save_array("train_X.dat",train_X)
+    save_array("train_y.dat",train_y)
+    save_array("val_X.dat",val_X)
     #save_array("val_y.dat",val_y)
-    save_array("X_data.dat",X_data)
-    save_array("y_data.dat",y_data)
-    save_array("dict_val.dict",dict_val)
-    save_array('val_y_index.csv',val_y_index)
-    return (X_data , y_data ,dict_val )
+    #save_array("X_data.dat",X_data)
+    #save_array("y_data.dat",y_data)
+    #saveFile("dict_val.dict",dict_val)
+    saveFile('val_y_index.csv',val_y_index)
+    return  train_X, train_y #X_data , y_data
 
 
 import matplotlib.pyplot as plt
 def self_pca(A, n_components = 250):
 	cov = np.dot( A.T, A)/A.shape[0]
 	U, s, Vh = np.linalg.svd(cov)
-	print( U.shape, s.shape, Vh.shape  )
+	#print( U.shape, s.shape, Vh.shape  )
 	plt.plot(s)
 	plt.show()
-	print(s)
+	#print(s)
 	s[n_components:] = 0
 
 	new_A = Xrot_reduced = np.dot(X, U[:,:n_components])  #np.dot(np.dot(U,np.diag(s)),Vh)# np.dot(U, np.dot(np.diag(s), Vh))
 
 	return new_A
-
-
-
 
 def intersect(a, b):
 	return list(set(a) & set(b))

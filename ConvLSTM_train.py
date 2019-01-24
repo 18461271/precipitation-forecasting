@@ -34,15 +34,14 @@ n_inputs = 7   # the number of prior rainfall maps
 n_outputs = 7 # forecasting for the next 7 days
 processed_path = "processeddata/*.jpg"
 
-imagelist,features =   color_imag(processed_path) #  load_color_data() #
+imagelist,features = color_imag(processed_path) #  load_color_data() #
 
 #**********************************************************************************************************************#--------------------------------------------------------------------------
 #3. the 3rd step is to change unsupervised problem to supervised problem.
 
-
-
 #imagelist,features =   load_color_data()
 print("data loaded")
+
 train_X_idx , train_y_idx, val_X_idx , val_y_idx =  convlstm_data(imagelist,  n_inputs, n_outputs)
 #print(train_X_idx.shape )
 #train_X , train_y = load_array("train_X.dat")  , load_array("train_y.dat")
@@ -53,6 +52,7 @@ train_X_idx , train_y_idx, val_X_idx , val_y_idx =  convlstm_data(imagelist,  n_
 #***********************************************************************************************************************************
 #4. the 4th step is to build a convolutional LSTM (ConvLSTM) network to preserve all the spatial information
 #reference: https://github.com/sxjscience/HKO-7  the author of the papaer  Deep Learning for Precipitation Nowcasting: A Benchmark and A New Model
+#https://github.com/TeaPearce/precipitation-prediction-convLSTM-keras/blob/master/precip_v09.py
 
 def convlstm(img_shape= 128 ):
 
@@ -70,7 +70,8 @@ def convlstm(img_shape= 128 ):
 	model.add(BatchNormalization())
 	model.add(Dropout(0.25))
 
-	model.add(TimeDistributed(Conv3D(filters = 3, kernel_size=(3, 3, 3), activation='sigmoid', padding='same', data_format='channels_last')))
+	#model.add(TimeDistributed(Conv3D(filters = 3, kernel_size=(3, 3, 3), activation='sigmoid', padding='same', data_format='channels_last')))
+	model.add((Conv3D(filters = 3, kernel_size=(3, 3, 3), activation='sigmoid', padding='same', data_format='channels_last')))
 	adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.96, amsgrad=False)
 
 	model.compile(loss = 'mse', optimizer = adam)
@@ -79,7 +80,7 @@ def convlstm(img_shape= 128 ):
 
 model = convlstm()
 print(model.summary())
-
+sys.exit()
 #print(train_X_idx[], type( train_X_idx) )
 #sys.exit()
 #**********************************************************************************************************************
@@ -139,4 +140,5 @@ for i in range(n_vals ):
         #print(j.shape, np.squeeze(j).shape)
         y[idx,:,:]= np.squeeze(j)
         # the following code is not provided
-		print("")
+        sys.exit()
+		#print("")
