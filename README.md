@@ -11,9 +11,7 @@ how to  use :   run `ConvLSTM_train.py`
 3. the 3rd step is to change unsupervised problem to supervised problem. Train : data is split as follows, 60% train, 40 validation.
 4. the 4th step is to build a ConvLSTM model: many to many multivariate and multi-step model.  ConvLSTM can preserve all the spatial information
 5. train the model by reading the data on the fly
-6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity to output the imagesID lists which have the
-shortest distances to the stored features,, and do the intersect_count with regards to ture image_id
-this part is not provided.
+6. Evaluation : feed the validation_x data to the trained model, the output are 3d images, GAN could be employed to generate 7 days forecasting.  
 
 
 ### My Second approach is to use the fully connected LSTM, the basic idea is to apply recurrent neural networks on images to encode image features and then decode this information for forecasting, a typical [encoder-decoder LSTM model](https://machinelearningmastery.com/lstm-autoencoders/) for solving sequence-to-sequence prediction problems.
@@ -27,7 +25,7 @@ how to  use :   run `FLSTM_train.py` to train the model then run `FLSTM_test.py`
 > To summarize, the RepeatVector is used as an adapter to fit the fixed-sized 2D output of the encoder to the direring length and 3D input expected by the decoder. The TimeDistributed
 wrapper allows the same output layer to be reused for each element in the output sequence. " 
 *long short term memory networks with python*  P129  
-6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity to output the imagesId lists which have the shortest distances to the stored features,, and do the intersect_count with regards to ture image_id.
+6. Evaluation : feed the validation_x data to the trained model,  the general idea is to utilize cosine similarity to output the imagesId lists which have the shortest distances to the stored feature matrix, and do the intersect_count with regards to ture image_Ids.
 
 Reference: 
 
