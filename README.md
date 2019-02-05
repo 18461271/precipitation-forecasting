@@ -9,9 +9,9 @@ how to  use :   run `ConvLSTM_train.py`
 1. the first step involves converting gif image to jpg image
 2. the second step is to read image data and crop uncessary text in the image, and then build a dictionary to store  image_id : 3D_image_data pairs
 3. the 3rd step is to change unsupervised problem to supervised problem. Train : data is split as follows, 60% train, 40 validation.
-4. the 4th step is to build a ConvLSTM model: many to many multivariate and multi-step model.  ConvLSTM can preserve all the spatial information
+4. the 4th step is to build a ConvLSTM model: many to many multivariate model.  ConvLSTM can preserve all the spatial information
 5. train the model by reading the data on the fly
-6. Evaluation : feed the validation_x data to the trained model, the output are 3d images, GAN could be employed to generate 7 days forecasting.  
+6. Evaluation : feed the validation_x data to the trained model, the output are 3d images, GAN could be employed to generate 7 days forecasting map.  
 
 
 ### My Second approach is to use the fully connected LSTM, the basic idea is to apply recurrent neural networks on images to encode image features and then decode this information for forecasting, a typical [encoder-decoder LSTM model](https://machinelearningmastery.com/lstm-autoencoders/) for solving sequence-to-sequence prediction problems.
@@ -19,7 +19,7 @@ how to  use :   run `ConvLSTM_train.py`
 how to  use :   run `FLSTM_train.py` to train the model then run `FLSTM_test.py` to test.
  
 1. the first step involves converting gif image to jpg image
-2. the second step is to read image data and crop uncessary text in the image, all the images are reshaped  and  PCA dimension deducted and standardized into 1D array with 2048 dimensions, and finally a dictionary is built to store  (image_id : 1d_image_feature) pairs
+2. the second step is to read image data and crop uncessary text in the image, all the images are reshaped  and  PCA dimension deducted and standardized into an array with 2048 dimensions, and finally a dictionary is built to store  (image_id : 1d_image_feature) pairs
 3. the 3rd step is to change unsupervised problem to supervised problem. Train : data is split as follows, 67% train, 33% validation. X,Y data have shape (n_items, time_dimension, feature_dimension) as required by LSTM layer `input_shape`
 4. the 4th step is to build a LSTM model: many to many multivariate and multi-step model. "
 > To summarize, the RepeatVector is used as an adapter to fit the fixed-sized 2D output of the encoder to the direring length and 3D input expected by the decoder. The TimeDistributed
